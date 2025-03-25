@@ -24,12 +24,4 @@ pub enum Error {
 
     #[error("Derialization error from Instant-Xml")]
     InstantXmlError(#[from] instant_xml::Error),
-
-    /// Error Deserializing internal 3MF XML structure
-    #[error("Deserialization error from xml reading")]
-    XMLDe(#[from] quick_xml::DeError),
-
-    /// Error Serializing internal 3MF XML structure
-    #[error("Serialization error from xml writing")]
-    XMLSe(#[from] quick_xml::SeError),
 }

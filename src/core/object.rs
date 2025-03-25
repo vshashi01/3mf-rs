@@ -1,55 +1,43 @@
 use instant_xml::{FromXml, ToXml};
-use serde::{Deserialize, Serialize};
 
 use crate::{
     core::{component::Components, Mesh},
     threemf_namespaces::{CORE_NS, PROD_NS},
 };
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Debug)]
-#[serde(rename_all = "lowercase")]
+#[derive(FromXml, ToXml, PartialEq, Debug)]
 #[xml(ns(CORE_NS, p=PROD_NS), rename="object")]
 pub struct Object {
-    #[serde(rename = "@id")]
     #[xml(attribute)]
     pub id: usize,
 
-    #[serde(rename = "@type", skip_serializing_if = "Option::is_none")]
     #[xml(rename = "type", attribute)]
     pub objecttype: Option<ObjectType>,
 
-    #[serde(rename = "@thumbnail", skip_serializing_if = "Option::is_none")]
     #[xml(rename = "thumbnail", attribute)]
     pub thumbnail: Option<String>,
 
-    #[serde(rename = "@partnumber", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub partnumber: Option<String>,
 
-    #[serde(rename = "@name", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub name: Option<String>,
 
-    #[serde(rename = "@pid", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub pid: Option<usize>,
 
-    #[serde(rename = "@pindex", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub pindex: Option<usize>,
 
     #[xml(attribute, ns(PROD_NS), rename = "UUID")]
     pub uuid: Option<String>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub mesh: Option<Mesh>,
 
-    #[serde(skip_serializing_if = "Option::is_none")]
     pub components: Option<Components>,
 }
 
-#[derive(Debug, Deserialize, Serialize, ToXml, FromXml, Default, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
+#[derive(Debug, ToXml, FromXml, Default, PartialEq, Eq)]
 #[xml(scalar, rename_all = "lowercase")]
 pub enum ObjectType {
     #[default]

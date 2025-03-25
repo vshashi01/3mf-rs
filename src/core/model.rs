@@ -1,5 +1,4 @@
 use instant_xml::{FromXml, ToXml};
-use serde::{Deserialize, Serialize};
 
 use crate::{
     core::{
@@ -14,27 +13,21 @@ use crate::{
 
 use std::vec;
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, Debug, PartialEq)]
-#[serde(rename_all = "lowercase")]
+#[derive(FromXml, ToXml, Debug, PartialEq)]
 #[xml(ns(CORE_NS, p=PROD_NS), rename = "model")]
 pub struct Model {
-    #[serde(rename = "@xmlns", default)]
     #[xml(attribute)]
     pub xmlns: Option<String>,
 
-    #[serde(rename = "@unit", default)]
     #[xml(attribute)]
     pub unit: Unit,
 
-    #[serde(rename = "@requiredextensions", default)]
     #[xml(attribute)]
     pub requiredextensions: Option<String>,
 
-    #[serde(rename = "@recommendedextensions", default)]
     #[xml(attribute)]
     pub recommendedextensions: Option<String>,
 
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub metadata: Vec<Metadata>,
 
     pub resources: Resources,
@@ -43,8 +36,7 @@ pub struct Model {
 }
 
 /// Model measurement unit, default is millimeter
-#[derive(Serialize, Deserialize, FromXml, ToXml, Default, Debug, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
+#[derive(FromXml, ToXml, Default, Debug, PartialEq, Eq)]
 #[xml(scalar, rename_all = "lowercase")]
 pub enum Unit {
     Micron,

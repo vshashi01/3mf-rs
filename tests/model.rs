@@ -1,9 +1,17 @@
-use threemf::core::{component::Components, object::Object};
+use instant_xml::from_str;
+use pretty_assertions::assert_eq;
+use threemf::{
+    core::{component::Components, object::Object},
+    threemf_namespaces::{CORE_NS, PROD_NS, PROD_PREFIX},
+};
 
 #[test]
 fn test_object() {
-    let object_str = r##"<object id="1"><components><component objectid="66" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /><component objectid="67" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /><component objectid="68" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /></components></object>"##;
-    let object_de: Object = quick_xml::de::from_str(object_str).unwrap();
+    let object_str = &format!(
+        r##"<object xmlns="{CORE}" id="1"><components><component objectid="66" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /><component objectid="67" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /><component objectid="68" transform="0.0393701 0 0 0 0.0393701 0 0 0 0.0393701 0 0 0" /></components></object>"##,
+        CORE = CORE_NS,
+    );
+    let object_de: Object = from_str(object_str).unwrap();
     match object_de {
         Object { mesh: Some(_), .. } => panic!("No mesh in this object"),
         Object {
@@ -20,8 +28,9 @@ fn test_object() {
 
 #[test]
 fn test_metadatagroup() {
-    let object_str = r##"
-                <object id="2" name="Part 2" type="model" p:UUID="5690f40c-430c-479f-b804-29081051c247" pid="1" pindex="0">
+    let object_str = &format!(
+        r##"
+                <object xmlns="{core}" xmlns:{prefix}="{prod}" id="2" name="Part 2" type="model" p:UUID="5690f40c-430c-479f-b804-29081051c247" pid="1" pindex="0">
                         <metadatagroup>
                                 <metadata name="customXMLNS0:PTC_onshape_metadata" type="entity_type">Body</metadata>
                         </metadatagroup>
@@ -36,7 +45,11 @@ fn test_metadatagroup() {
                                 </triangles>
                         </mesh>
                 </object>
-        "##;
-    let object_de: Object = quick_xml::de::from_str(object_str).unwrap();
+        "##,
+        core = CORE_NS,
+        prefix = PROD_PREFIX,
+        prod = PROD_NS
+    );
+    let object_de: Object = from_str(object_str).unwrap();
     assert!(object_de.mesh.is_some());
 }

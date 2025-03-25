@@ -23,5 +23,3 @@
 pub mod core;
 pub mod io;
 pub mod threemf_namespaces;
-
-pub use self::{core::Mesh, io::read::read, io::write::write};

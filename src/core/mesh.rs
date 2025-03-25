@@ -1,5 +1,4 @@
 use instant_xml::*;
-use serde::{Deserialize, Serialize};
 
 use crate::threemf_namespaces::CORE_NS;
 
@@ -12,7 +11,7 @@ use crate::threemf_namespaces::CORE_NS;
 /// mesh type is out of scope for this library. It is expected that users of
 /// this library will use their own mesh type anyway, and the simplicity of
 /// `TriangleMesh` provides an easy target for conversion from such a type.
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Clone, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
 #[xml(ns(CORE_NS), rename = "mesh")]
 pub struct Mesh {
     /// The vertices of the mesh
@@ -29,35 +28,30 @@ pub struct Mesh {
 }
 
 /// A list of vertices, as a struct mainly to comply with easier serde xml
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Clone, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
 #[xml(ns(CORE_NS), rename = "vertices")]
 pub struct Vertices {
-    #[serde(default)]
     pub vertex: Vec<Vertex>,
 }
 
 /// A vertex in a triangle mesh
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Clone, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
 #[xml(ns(CORE_NS), rename = "vertex")]
 pub struct Vertex {
-    #[serde(rename = "@x")]
     #[xml(attribute)]
     pub x: f64,
 
-    #[serde(rename = "@y")]
     #[xml(attribute)]
     pub y: f64,
 
-    #[serde(rename = "@z")]
     #[xml(attribute)]
     pub z: f64,
 }
 
 /// A list of triangles, as a struct mainly to comply with easier serde xml
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Clone, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
 #[xml(ns(CORE_NS), rename = "triangles")]
 pub struct Triangles {
-    #[serde(default)]
     pub triangle: Vec<Triangle>,
 }
 
@@ -65,34 +59,27 @@ pub struct Triangles {
 ///
 /// The triangle consists of indices that refer to the vertices of the mesh. See
 /// [`TriangleMesh`].
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Clone, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
 #[xml(ns(CORE_NS), rename = "triangle")]
 pub struct Triangle {
-    #[serde(rename = "@v1")]
     #[xml(attribute)]
     pub v1: usize,
 
-    #[serde(rename = "@v2")]
     #[xml(attribute)]
     pub v2: usize,
 
-    #[serde(rename = "@v3")]
     #[xml(attribute)]
     pub v3: usize,
 
-    #[serde(rename = "@p1", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub p1: Option<usize>,
 
-    #[serde(rename = "@p2", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub p2: Option<usize>,
 
-    #[serde(rename = "@p3", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub p3: Option<usize>,
 
-    #[serde(rename = "@pid", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub pid: Option<usize>,
 }
