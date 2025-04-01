@@ -179,6 +179,10 @@ pub mod tests {
                         extension: "png".to_owned(),
                         content_type: DefaultContentTypeEnum::ImagePng,
                     },
+                    DefaultContentTypes {
+                        extension: "jpg".to_owned(),
+                        content_type: DefaultContentTypeEnum::ImageJPEG,
+                    },
                 ],
             }
         );

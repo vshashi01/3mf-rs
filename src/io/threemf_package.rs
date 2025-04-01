@@ -199,6 +199,7 @@ impl ThreemfPackage {
                             )));
                         }
                     }
+                    RelationshipType::Unknown(_) => {}
                 }
             }
         }
