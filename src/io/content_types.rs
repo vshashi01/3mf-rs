@@ -1,4 +1,4 @@
-use instant_xml::{FromXml, ToXml};
+use instant_xml::{Error, FromXml, Kind, ToXml};
 
 /// Content types for the Open Packaging Conventions (OPC).
 /// Contains a collection of [DefaultContentTypes].
@@ -12,20 +12,86 @@ pub struct ContentTypes {
 
 /// Predefined content types supported by [threemf::io] currently.
 /// If a content type is not found, it will fail the 3mf file parsing.
-#[derive(ToXml, FromXml, Debug, PartialEq, Eq)]
-#[xml(scalar)]
+#[derive(Debug, PartialEq, Eq)]
+// #[xml(scalar)]
 pub enum DefaultContentTypeEnum {
     /// Represents a relationship content.
-    #[xml(rename = "application/vnd.openxmlformats-package.relationships+xml")]
     Relationship,
 
     /// Represents a 3D model content.
-    #[xml(rename = "application/vnd.ms-package.3dmanufacturing-3dmodel+xml")]
     Model,
 
     /// Represents a PNG image content.
-    #[xml(rename = "image/png")]
     ImagePng,
+
+    /// Represents a JPEG image content.
+    ImageJPEG,
+
+    // Represents a Content Type that is not currently known to this library
+    // content namespace is stored in the tuple.
+    Unknown(String),
+}
+
+const RELATIONSHIP_NS: &str = "application/vnd.openxmlformats-package.relationships+xml";
+const MODEL_NS: &str = "application/vnd.ms-package.3dmanufacturing-3dmodel+xml";
+const PNG_NS: &str = "image/png";
+const JPEG_NS: &str = "image/jpeg";
+
+impl ToXml for DefaultContentTypeEnum {
+    fn serialize<W: std::fmt::Write + ?Sized>(
+        &self,
+        _: Option<instant_xml::Id<'_>>,
+        serializer: &mut instant_xml::Serializer<W>,
+    ) -> Result<(), Error> {
+        let ns_str = match self {
+            Self::Relationship => RELATIONSHIP_NS,
+            Self::Model => MODEL_NS,
+            Self::ImagePng => PNG_NS,
+            Self::ImageJPEG => JPEG_NS,
+            Self::Unknown(ns) => ns,
+        };
+
+        serializer.write_str(ns_str)?;
+        Ok(())
+    }
+}
+
+impl<'xml> FromXml<'xml> for DefaultContentTypeEnum {
+    fn matches(id: instant_xml::Id<'_>, field: Option<instant_xml::Id<'_>>) -> bool {
+        match field {
+            Some(field) => id == field,
+            None => false,
+        }
+    }
+
+    fn deserialize<'cx>(
+        into: &mut Self::Accumulator,
+        field: &'static str,
+        deserializer: &mut instant_xml::Deserializer<'cx, 'xml>,
+    ) -> Result<(), Error> {
+        if into.is_some() {
+            return Err(Error::DuplicateValue(field));
+        }
+
+        let value = match deserializer.take_str()? {
+            Some(value) => value,
+            None => return Err(Error::MissingValue("No ContentType string found")),
+        };
+
+        match value.into_owned().as_ref() {
+            RELATIONSHIP_NS => *into = Some(Self::Relationship),
+            MODEL_NS => *into = Some(Self::Model),
+            PNG_NS => *into = Some(Self::ImagePng),
+            JPEG_NS => *into = Some(Self::ImageJPEG),
+            value => *into = Some(Self::Unknown(value.to_owned())),
+        }
+
+        Ok(())
+    }
+
+    type Accumulator = Option<Self>;
+
+    const KIND: Kind = Kind::Scalar;
 }
 
 /// Internal structure for serde of [ContentTypes].
@@ -46,20 +112,16 @@ pub mod tests {
     use instant_xml::{from_str, to_string};
     use pretty_assertions::assert_eq;
 
-    use crate::io::content_types::CONTENT_TYPES_NS;
-
-    use super::{ContentTypes, DefaultContentTypeEnum, DefaultContentTypes};
-
-    const RELS_CONTENT_NS: &str = "application/vnd.openxmlformats-package.relationships+xml";
-    const MODEL_CONTENT_NS: &str = "application/vnd.ms-package.3dmanufacturing-3dmodel+xml";
-    const PNG_CONTENT_NS: &str = "image/png";
+    use super::{
+        ContentTypes, DefaultContentTypeEnum, DefaultContentTypes, CONTENT_TYPES_NS, JPEG_NS,
+        MODEL_NS, PNG_NS, RELATIONSHIP_NS,
+    };
 
     #[test]
     pub fn toxml_content_types_test() {
         let xml_string = format!(
-            r#"<{a} xmlns="{b}"><Default Extension="rels" ContentType="{RELS_CONTENT_NS}" /><Default Extension="model" ContentType="{MODEL_CONTENT_NS}" /><Default Extension="png" ContentType="{PNG_CONTENT_NS}" /></{a}>"#,
-            a = "Types",
-            b = CONTENT_TYPES_NS,
+            r#"<Types xmlns="{}"><Default Extension="rels" ContentType="{}" /><Default Extension="model" ContentType="{}" /><Default Extension="png" ContentType="{}" /><Default Extension="jpg" ContentType="{}" /><Default Extension="unknown" ContentType="//some//unknown//content" /></Types>"#,
+            CONTENT_TYPES_NS, RELATIONSHIP_NS, MODEL_NS, PNG_NS, JPEG_NS
         );
         let content = ContentTypes {
             defaults: vec![
@@ -75,6 +137,16 @@ pub mod tests {
                     extension: "png".to_owned(),
                     content_type: DefaultContentTypeEnum::ImagePng,
                 },
+                DefaultContentTypes {
+                    extension: "jpg".to_owned(),
+                    content_type: DefaultContentTypeEnum::ImageJPEG,
+                },
+                DefaultContentTypes {
+                    extension: "unknown".to_owned(),
+                    content_type: DefaultContentTypeEnum::Unknown(
+                        "//some//unknown//content".to_owned(),
+                    ),
+                },
             ],
         };
         let content_string = to_string(&content).unwrap();
@@ -85,10 +157,10 @@ pub mod tests {
     #[test]
     pub fn fromxml_content_types_test() {
         let xml_string = format!(
-            r#"<{a} xmlns="{b}"><Default Extension="rels" ContentType="{RELS_CONTENT_NS}"/><Default Extension="model" ContentType="{MODEL_CONTENT_NS}"/><Default Extension="png" ContentType="{PNG_CONTENT_NS}"/></{a}>"#,
-            a = "Types",
-            b = CONTENT_TYPES_NS,
+            r#"<Types xmlns="{}"><Default Extension="rels" ContentType="{}" /><Default Extension="model" ContentType="{}" /><Default Extension="png" ContentType="{}" /><Default Extension="jpg" ContentType="{}" /></Types>"#,
+            CONTENT_TYPES_NS, RELATIONSHIP_NS, MODEL_NS, PNG_NS, JPEG_NS
         );
+
         let content = from_str::<ContentTypes>(&xml_string).unwrap();
 
         assert_eq!(
@@ -115,15 +187,31 @@ pub mod tests {
     #[test]
     pub fn fromxml_unknown_content_types_test() {
         let xml_string = format!(
-            r#"<{a} xmlns="{b}"><Default Extension="rels" ContentType="{RELS_CONTENT_NS}"/><Default Extension="model" ContentType="{MODEL_CONTENT_NS}"/><Default Extension="unknown" ContentType="some/unknown/content"/></{a}>"#,
-            a = "Types",
-            b = CONTENT_TYPES_NS,
+            r#"<Types xmlns="{}"><Default Extension="rels" ContentType="{}"/><Default Extension="model" ContentType="{}"/><Default Extension="unknown" ContentType="some/unknown/content"/></Types>"#,
+            CONTENT_TYPES_NS, RELATIONSHIP_NS, MODEL_NS,
         );
-        let content = from_str::<ContentTypes>(&xml_string);
+        let content = from_str::<ContentTypes>(&xml_string).unwrap();
 
         assert_eq!(
             content,
-            Err(instant_xml::Error::UnexpectedValue("enum variant not found for 'some/unknown/content' in field DefaultContentTypes::content_type".to_owned()))
+            ContentTypes {
+                defaults: vec![
+                    DefaultContentTypes {
+                        extension: "rels".to_owned(),
+                        content_type: DefaultContentTypeEnum::Relationship,
+                    },
+                    DefaultContentTypes {
+                        extension: "model".to_owned(),
+                        content_type: DefaultContentTypeEnum::Model,
+                    },
+                    DefaultContentTypes {
+                        extension: "unknown".to_owned(),
+                        content_type: DefaultContentTypeEnum::Unknown(
+                            "some/unknown/content".to_owned()
+                        ),
+                    }
+                ]
+            }
         );
     }
 }
