@@ -1,11 +1,10 @@
 use instant_xml::*;
-use serde::{Deserialize, Serialize};
 
 use std::ops::Index;
 
 const MATRIX_SIZE: usize = 12;
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Transform(pub [f64; MATRIX_SIZE]);
 
 impl ToXml for Transform {

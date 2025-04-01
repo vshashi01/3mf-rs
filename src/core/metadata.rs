@@ -1,22 +1,19 @@
 use instant_xml::{FromXml, ToXml};
-use serde::{Deserialize, Serialize};
 
 use crate::threemf_namespaces::CORE_NS;
 
 //ToDo: Add additional optional fields on Metadata
-#[derive(Serialize, Deserialize, FromXml, ToXml, Debug, PartialEq, Eq)]
+#[derive(FromXml, ToXml, Debug, PartialEq, Eq)]
 #[xml(ns(CORE_NS), rename = "metadata")]
 pub struct Metadata {
-    #[serde(rename = "@name")]
     #[xml(attribute)]
     pub name: String,
 
-    #[serde(rename = "$value")]
     #[xml(direct)]
     pub value: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, ToXml, FromXml, PartialEq, Eq)]
+#[derive(Debug, ToXml, FromXml, PartialEq, Eq)]
 #[xml(ns(CORE_NS), rename = "metadatagroup")]
 pub struct MetadataGroup {
     pub metadata: Vec<Metadata>,

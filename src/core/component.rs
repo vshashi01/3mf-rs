@@ -1,25 +1,22 @@
 use instant_xml::{FromXml, ToXml};
-use serde::{Deserialize, Serialize};
 
 use crate::{
     core::transform::Transform,
     threemf_namespaces::{CORE_NS, PROD_NS},
 };
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Debug)]
 #[xml(ns(CORE_NS), rename = "components")]
 pub struct Components {
     pub component: Vec<Component>,
 }
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, PartialEq, Debug)]
+#[derive(FromXml, ToXml, PartialEq, Debug)]
 #[xml(ns(CORE_NS, p=PROD_NS), rename = "component")]
 pub struct Component {
-    #[serde(rename = "@objectid")]
     #[xml(attribute)]
     pub objectid: usize,
 
-    #[serde(rename = "@transform", skip_serializing_if = "Option::is_none")]
     #[xml(attribute)]
     pub transform: Option<Transform>,
 

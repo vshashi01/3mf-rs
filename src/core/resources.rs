@@ -1,19 +1,16 @@
 use instant_xml::{FromXml, ToXml};
-use serde::{Deserialize, Serialize};
 
 use crate::{core::object::Object, threemf_namespaces::CORE_NS};
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, Default, PartialEq, Debug)]
+#[derive(FromXml, ToXml, Default, PartialEq, Debug)]
 #[xml(ns(CORE_NS), rename = "resources")]
 pub struct Resources {
-    #[serde(default)]
     pub object: Vec<Object>,
 
-    #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub basematerials: Vec<BaseMaterials>,
 }
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, Default, PartialEq, Eq, Debug)]
+#[derive(FromXml, ToXml, Default, PartialEq, Eq, Debug)]
 #[xml(ns(CORE_NS), rename = "base")]
 pub struct Base {
     #[xml(attribute)]
@@ -23,7 +20,7 @@ pub struct Base {
     pub displaycolor: String, //ToDo: Make this a specific color struct for flexibility
 }
 
-#[derive(Serialize, Deserialize, FromXml, ToXml, Default, Debug, PartialEq, Eq)]
+#[derive(FromXml, ToXml, Default, Debug, PartialEq, Eq)]
 #[xml(ns(CORE_NS), rename = "basematerials")]
 pub struct BaseMaterials {
     #[xml(attribute)]
