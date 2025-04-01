@@ -6,4 +6,5 @@ pub mod model;
 pub mod object;
 pub mod resources;
 pub mod transform;
+pub mod triangle_set;
 pub use mesh::*;

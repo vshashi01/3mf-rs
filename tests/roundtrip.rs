@@ -54,6 +54,7 @@ fn roundtrip_threemfpackage_test() {
     let mesh = Mesh {
         triangles,
         vertices,
+        trianglesets: None,
     };
 
     let write_package = ThreemfPackage {

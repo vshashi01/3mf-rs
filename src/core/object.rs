@@ -58,7 +58,9 @@ pub mod test {
             component::{Component, Components},
             Mesh, Triangles, Vertices,
         },
-        threemf_namespaces::{CORE_NS, PROD_NS, PROD_PREFIX},
+        threemf_namespaces::{
+            CORE_NS, CORE_TRIANGLESET_NS, CORE_TRIANGLESET_PREFIX, PROD_NS, PROD_PREFIX,
+        },
     };
 
     use super::{Object, ObjectType};
@@ -211,8 +213,8 @@ pub mod test {
     #[test]
     pub fn roundtrip_advanced_mesh_object_test() {
         let xml_string = format!(
-            r##"<object xmlns="{}" xmlns:{}="{}" id="4" type="model" thumbnail="\thumbnail\part_thumbnail.png" partnumber="part_1" name="Object Part"><mesh><vertices></vertices><triangles></triangles></mesh></object>"##,
-            CORE_NS, PROD_PREFIX, PROD_NS
+            r##"<object xmlns="{}" xmlns:{}="{}" id="4" type="model" thumbnail="\thumbnail\part_thumbnail.png" partnumber="part_1" name="Object Part"><mesh xmlns:{}="{}"><vertices></vertices><triangles></triangles></mesh></object>"##,
+            CORE_NS, PROD_PREFIX, PROD_NS, CORE_TRIANGLESET_PREFIX, CORE_TRIANGLESET_NS
         );
         let object = Object {
             id: 4,
@@ -226,6 +228,7 @@ pub mod test {
             mesh: Some(Mesh {
                 vertices: Vertices { vertex: vec![] },
                 triangles: Triangles { triangle: vec![] },
+                trianglesets: None,
             }),
             components: None,
         };
