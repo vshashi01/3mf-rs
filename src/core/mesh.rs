@@ -1,6 +1,7 @@
 use instant_xml::*;
 
-use crate::threemf_namespaces::CORE_NS;
+use crate::core::triangle_set::TriangleSets;
+use crate::threemf_namespaces::{CORE_NS, CORE_TRIANGLESET_NS};
 
 /// A triangle mesh
 ///
@@ -12,7 +13,7 @@ use crate::threemf_namespaces::CORE_NS;
 /// this library will use their own mesh type anyway, and the simplicity of
 /// `TriangleMesh` provides an easy target for conversion from such a type.
 #[derive(FromXml, ToXml, PartialEq, Clone, Debug)]
-#[xml(ns(CORE_NS), rename = "mesh")]
+#[xml(ns(CORE_NS, t = CORE_TRIANGLESET_NS), rename = "mesh")]
 pub struct Mesh {
     /// The vertices of the mesh
     ///
@@ -25,6 +26,9 @@ pub struct Mesh {
     /// Each triangle consists of indices that refer back to the `vertices`
     /// field.
     pub triangles: Triangles,
+
+    #[xml(ns(CORE_TRIANGLESET_NS))]
+    pub trianglesets: Option<TriangleSets>,
 }
 
 /// A list of vertices, as a struct mainly to comply with easier serde xml
@@ -89,7 +93,7 @@ pub mod tests {
     use instant_xml::{from_str, to_string};
     use pretty_assertions::assert_eq;
 
-    use crate::threemf_namespaces::CORE_NS;
+    use crate::threemf_namespaces::{CORE_NS, CORE_TRIANGLESET_NS, CORE_TRIANGLESET_PREFIX};
 
     use super::{Mesh, Triangle, Triangles, Vertex, Vertices};
 
@@ -280,8 +284,8 @@ pub mod tests {
     #[test]
     pub fn toxml_mesh_test() {
         let xml_string = format!(
-            r##"<mesh xmlns="{}"><vertices><vertex x="-1" y="-1" z="0" /><vertex x="1" y="-1" z="0" /><vertex x="1" y="1" z="0" /><vertex x="-1" y="1" z="0" /></vertices><triangles><triangle v1="0" v2="1" v3="2" /><triangle v1="0" v2="2" v3="3" /></triangles></mesh>"##,
-            CORE_NS
+            r##"<mesh xmlns="{}" xmlns:{}="{}"><vertices><vertex x="-1" y="-1" z="0" /><vertex x="1" y="-1" z="0" /><vertex x="1" y="1" z="0" /><vertex x="-1" y="1" z="0" /></vertices><triangles><triangle v1="0" v2="1" v3="2" /><triangle v1="0" v2="2" v3="3" /></triangles></mesh>"##,
+            CORE_NS, CORE_TRIANGLESET_PREFIX, CORE_TRIANGLESET_NS
         );
         let mesh = Mesh {
             vertices: Vertices {
@@ -330,6 +334,7 @@ pub mod tests {
                     },
                 ],
             },
+            trianglesets: None,
         };
         let mesh_string = to_string(&mesh).unwrap();
 
@@ -392,7 +397,8 @@ pub mod tests {
                             pid: None,
                         }
                     ]
-                }
+                },
+                trianglesets: None,
             }
         )
     }

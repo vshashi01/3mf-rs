@@ -400,6 +400,6 @@ pub mod tests {
             writer
         };
 
-        assert_eq!(bytes.into_inner().len(), 943);
+        assert_eq!(bytes.into_inner().len(), 961);
     }
 }

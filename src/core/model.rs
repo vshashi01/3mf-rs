@@ -8,13 +8,13 @@ use crate::{
         resources::Resources,
         Mesh,
     },
-    threemf_namespaces::{CORE_NS, PROD_NS},
+    threemf_namespaces::{CORE_NS, CORE_TRIANGLESET_NS, PROD_NS},
 };
 
 use std::vec;
 
 #[derive(FromXml, ToXml, Debug, PartialEq)]
-#[xml(ns(CORE_NS, p=PROD_NS), rename = "model")]
+#[xml(ns(CORE_NS, p = PROD_NS, t = CORE_TRIANGLESET_NS), rename = "model")]
 pub struct Model {
     #[xml(attribute)]
     pub xmlns: Option<String>,
@@ -111,7 +111,9 @@ pub mod test {
             object::{Object, ObjectType},
             resources::Resources,
         },
-        threemf_namespaces::{CORE_NS, PROD_NS, PROD_PREFIX},
+        threemf_namespaces::{
+            CORE_NS, CORE_TRIANGLESET_NS, CORE_TRIANGLESET_PREFIX, PROD_NS, PROD_PREFIX,
+        },
     };
 
     use super::{Model, Unit};
@@ -119,8 +121,8 @@ pub mod test {
     #[test]
     pub fn toxml_simple_model_test() {
         let xml_string = format!(
-            r#"<model xmlns="{}" xmlns:{}="{}" unit="millimeter"><metadata name="Trial Metadata" /><resources><object id="346" type="model" name="test part"></object></resources><build><item objectid="346" /></build></model>"#,
-            CORE_NS, PROD_PREFIX, PROD_NS
+            r#"<model xmlns="{}" xmlns:{}="{}" xmlns:{}="{}" unit="millimeter"><metadata name="Trial Metadata" /><resources><object id="346" type="model" name="test part"></object></resources><build><item objectid="346" /></build></model>"#,
+            CORE_NS, PROD_PREFIX, PROD_NS, CORE_TRIANGLESET_PREFIX, CORE_TRIANGLESET_NS
         );
         let model = Model {
             xmlns: None,
