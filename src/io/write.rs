@@ -1,6 +1,7 @@
 use std::io::{self, prelude::*};
 
-use crate::Error;
+use super::error::Error;
+use crate::core::model::Model;
 use quick_xml::{
     events::{BytesDecl, Event},
     se::Serializer,
@@ -9,8 +10,6 @@ use quick_xml::{
 use serde::Serialize;
 
 use zip::{write::SimpleFileOptions, ZipWriter};
-
-use crate::model::Model;
 
 /// Write a triangle mesh to a 3MF writer
 pub fn write<W: Write + io::Seek, M: Into<Model>>(writer: W, model: M) -> Result<(), Error> {
@@ -34,6 +33,7 @@ pub fn write<W: Write + io::Seek, M: Into<Model>>(writer: W, model: M) -> Result
     xml_writer.write_event(Event::Decl(BytesDecl::new("1.0", Some("utf-8"), None)))?;
     xml_writer.write_indent()?;
     xml_writer.into_inner().write_all(xml.as_bytes())?;
+    // println!("{}", xml);
 
     archive.finish()?;
 

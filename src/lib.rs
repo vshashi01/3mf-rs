@@ -20,9 +20,8 @@
 //! [3MF specification]: https://3mf.io/specification/
 //! [Open Packaging Conventions]: https://standards.iso.org/ittf/PubliclyAvailableStandards/c061796_ISO_IEC_29500-2_2012.zip
 
-pub mod error;
-pub mod model;
-pub mod read;
-pub mod write;
+pub mod core;
+pub mod io;
+pub mod threemf_namespaces;
 
-pub use self::{error::Error, model::Mesh, read::read, write::write};
+pub use self::{core::Mesh, io::read::read, io::write::write};
