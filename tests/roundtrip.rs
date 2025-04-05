@@ -92,6 +92,7 @@ fn roundtrip_threemfpackage_test() {
         },
         sub_models: HashMap::new(),
         thumbnails: HashMap::new(),
+        unknown_parts: HashMap::new(),
         relationships: HashMap::from([(
             "_rels/.rels".to_owned(),
             Relationships {
