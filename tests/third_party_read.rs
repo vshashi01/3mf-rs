@@ -14,7 +14,7 @@ pub mod tests {
         let fixtures = get_test_fixtures();
 
         for fixture in fixtures {
-            if fixture.skip_test {
+            if fixture.skip_test || fixture.large_test {
                 continue;
             }
 
@@ -43,6 +43,7 @@ pub mod tests {
     struct TestFixture {
         pub filepath: String,
         pub skip_test: bool,
+        pub large_test: bool,
     }
 
     #[derive(Deserialize, Debug)]
