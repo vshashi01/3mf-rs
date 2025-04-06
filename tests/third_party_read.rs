@@ -1,29 +1,19 @@
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use serde::*;
-
-    use std::fs::File;
-    use std::path::PathBuf;
 
     use threemf::io::threemf_package::ThreemfPackage;
 
-    #[derive(Deserialize, Debug)]
-    struct TestFixture {
-        pub filepath: String,
-        pub skip_test: bool,
-    }
-
-    #[derive(Deserialize, Debug)]
-    struct TestFixtures {
-        pub fixtures: Vec<TestFixture>,
-    }
+    use std::fs::File;
+    use std::path::PathBuf;
+    use std::vec::IntoIter;
 
     #[test]
     pub fn can_load_thirdparty_3mf() {
         let folder_path = PathBuf::from("./tests/data/third-party/");
         let fixtures = get_test_fixtures();
 
-        for fixture in fixtures.fixtures {
+        for fixture in fixtures {
             if fixture.skip_test {
                 continue;
             }
@@ -46,6 +36,27 @@ mod tests {
                     );
                 }
             }
+        }
+    }
+
+    #[derive(Deserialize, Debug)]
+    struct TestFixture {
+        pub filepath: String,
+        pub skip_test: bool,
+    }
+
+    #[derive(Deserialize, Debug)]
+    struct TestFixtures {
+        pub fixtures: Vec<TestFixture>,
+    }
+
+    impl IntoIterator for TestFixtures {
+        type Item = TestFixture;
+
+        type IntoIter = IntoIter<TestFixture>;
+
+        fn into_iter(self) -> Self::IntoIter {
+            self.fixtures.into_iter()
         }
     }
 
