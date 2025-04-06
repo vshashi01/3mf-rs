@@ -389,7 +389,7 @@ pub mod tests {
             let threemf = ThreemfPackage {
                 root: Model {
                     xmlns: None,
-                    unit: model::Unit::Centimeter,
+                    unit: Some(model::Unit::Centimeter),
                     requiredextensions: None,
                     recommendedextensions: None,
                     metadata: vec![],
@@ -455,7 +455,7 @@ pub mod tests {
         let package = ThreemfPackage {
             root: Model {
                 xmlns: None,
-                unit: model::Unit::Millimeter,
+                unit: Some(model::Unit::Millimeter),
                 requiredextensions: None,
                 recommendedextensions: None,
                 metadata: vec![],
@@ -534,7 +534,7 @@ pub mod tests {
         let package = ThreemfPackage {
             root: Model {
                 xmlns: None,
-                unit: model::Unit::Millimeter,
+                unit: Some(model::Unit::Millimeter),
                 requiredextensions: None,
                 recommendedextensions: None,
                 metadata: vec![],

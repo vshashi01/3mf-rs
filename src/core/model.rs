@@ -20,7 +20,7 @@ pub struct Model {
     pub xmlns: Option<String>,
 
     #[xml(attribute)]
-    pub unit: Unit,
+    pub unit: Option<Unit>,
 
     #[xml(attribute)]
     pub requiredextensions: Option<String>,
@@ -36,7 +36,7 @@ pub struct Model {
 }
 
 /// Model measurement unit, default is millimeter
-#[derive(FromXml, ToXml, Default, Debug, PartialEq, Eq)]
+#[derive(ToXml, FromXml, Default, Debug, PartialEq, Eq)]
 #[xml(scalar, rename_all = "lowercase")]
 pub enum Unit {
     Micron,
@@ -57,7 +57,7 @@ impl Default for Model {
             metadata: Vec::new(),
             resources: Resources::default(),
             build: Build::default(),
-            unit: Unit::default(),
+            unit: Some(Unit::default()),
         }
     }
 }
@@ -126,7 +126,7 @@ pub mod test {
         );
         let model = Model {
             xmlns: None,
-            unit: Unit::Millimeter,
+            unit: Some(Unit::Millimeter),
             requiredextensions: None,
             recommendedextensions: None,
             metadata: vec![Metadata {
@@ -176,7 +176,7 @@ pub mod test {
             model,
             Model {
                 xmlns: None,
-                unit: Unit::Millimeter,
+                unit: Some(Unit::Millimeter),
                 requiredextensions: None,
                 recommendedextensions: None,
                 metadata: vec![Metadata {
@@ -232,7 +232,7 @@ pub mod test {
             model,
             Model {
                 xmlns: None,
-                unit: Unit::Millimeter,
+                unit: Some(Unit::Millimeter),
                 requiredextensions: None,
                 recommendedextensions: None,
                 metadata: vec![Metadata {

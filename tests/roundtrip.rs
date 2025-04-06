@@ -60,7 +60,7 @@ fn roundtrip_threemfpackage_test() {
     let write_package = ThreemfPackage {
         root: Model {
             xmlns: None,
-            unit: Unit::Millimeter,
+            unit: Some(Unit::Millimeter),
             requiredextensions: None,
             recommendedextensions: None,
             metadata: vec![],
