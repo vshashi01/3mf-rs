@@ -1,0 +1,25 @@
+{
+    "fixtures": [
+        {
+            "filepath": "blender-suzanne.3mf",
+            "origin": "Blender 3.2.1 with 3mf plugin 1.0.2",
+            "desc": "Suzanne from blender as single model in a 3mf file",
+            "date": "05-04-2025",
+            "skip_test": false
+        },
+        {
+            "filepath": "meshmixer-bunny.3mf",
+            "origin": "Meshmixer 3.5",
+            "desc": "Bunny as single model in a 3mf file",
+            "date": "05-04-2025",
+            "skip_test": false
+        },
+        {
+            "filepath": "ultimaker-spinal_implant.3mf",
+            "origin": "Ultimaker Cura 5.10.0",
+            "desc": "A set 10 instances of spinal implant placed on platform",
+            "date": "05-04-2025",
+            "skip_test": false
+        }
+    ]
+}

@@ -29,3 +29,5 @@ features = ["deflate"]
 [dev-dependencies]
 pretty_assertions = { version = "1.4.1" }
 collapse = { version = "0.1.2" }
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = { version = "1.0.140" }

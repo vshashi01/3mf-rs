@@ -1,0 +1,58 @@
+#[cfg(test)]
+mod tests {
+    use serde::*;
+
+    use std::fs::File;
+    use std::path::PathBuf;
+
+    use threemf::io::threemf_package::ThreemfPackage;
+
+    #[derive(Deserialize, Debug)]
+    struct TestFixture {
+        pub filepath: String,
+        pub skip_test: bool,
+    }
+
+    #[derive(Deserialize, Debug)]
+    struct TestFixtures {
+        pub fixtures: Vec<TestFixture>,
+    }
+
+    #[test]
+    pub fn can_load_thirdparty_3mf() {
+        let folder_path = PathBuf::from("./tests/data/third-party/");
+        let fixtures = get_test_fixtures();
+
+        for fixture in fixtures.fixtures {
+            if fixture.skip_test {
+                continue;
+            }
+
+            let filepath = folder_path.join(fixture.filepath);
+            let file = File::open(&filepath).unwrap();
+
+            let package = ThreemfPackage::from_reader(file, true);
+
+            match package {
+                Ok(threemf) => {
+                    assert!(!threemf.content_types.defaults.is_empty());
+                    assert!(!threemf.relationships.is_empty());
+                    assert!(!threemf.root.build.item.is_empty());
+                }
+                Err(err) => {
+                    panic!(
+                        "Failed to read the file: {:?} with err: {:?}",
+                        &filepath, err
+                    );
+                }
+            }
+        }
+    }
+
+    fn get_test_fixtures() -> TestFixtures {
+        let json = include_str!("../tests/data/third-party/third-party-test-fixtures.json");
+        let fixtures: TestFixtures = serde_json::from_str(json).unwrap();
+
+        fixtures
+    }
+}
