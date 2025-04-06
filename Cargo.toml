@@ -1,6 +1,6 @@
 [package]
 name = "threemf"
-version = "0.7.0"
+version = "0.8.0"
 
 edition = "2021"
 rust-version = "1.56"
@@ -15,10 +15,8 @@ repository = "https://github.com/hannobraun/3mf-rs"
 
 
 [dependencies]
-instant-xml = { git = "https://github.com/djc/instant-xml.git", branch = "main" }
+instant-xml = { version = "0.6.0" }
 image = { version = "0.25.5", default-features = false, features = ["png"] }
-#instant-xml = { version = "0.5.2" }
-instant-xml-macros = { version = "0.5.2" }
 thiserror = "2.0.3"
 
 [dependencies.zip]
@@ -31,3 +29,6 @@ pretty_assertions = { version = "1.4.1" }
 collapse = { version = "0.1.2" }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = { version = "1.0.140" }
+
+[patch.crates-io]
+instant-xml = { git = "https://github.com/djc/instant-xml.git" }
